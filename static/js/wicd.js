@@ -153,7 +153,7 @@ function current_network() {
       newp.append(document.createTextNode(' (IP: '));
         newp.append($('<i/>').text(data.data.ip));
         newp.append(document.createTextNode(')'));
-        newp.append('<a href=\"javascript:disconnect_network();\"><span class=\"glyphicon glyphicon-log-out\"></a>');
+        newp.append('<a href=\"javascript:disconnect_network();\" class=\"btn btn-danger\">Disconnect <span class=\"glyphicon glyphicon-log-out\"></a>');
       }
       newp.appendTo("#current_network");
     });
