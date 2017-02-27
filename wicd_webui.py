@@ -5,7 +5,6 @@ from flask import Flask, render_template, jsonify, abort, request
 import dbus
 import dbus.service
 import sys
-from wicd import misc
 
 app = Flask(__name__)
 
@@ -31,7 +30,9 @@ def list():
         result['essid'] = wireless.GetWirelessProperty(network_id, 'essid')
 
         # check if there's key/passphrase stored (WPA1/2 and WEP only, sorry)
-        result['known'] = (wireless.GetWirelessProperty(network_id, 'key') or wireless.GetWirelessProperty(network_id, 'apsk') or wireless.GetWirelessProperty(network_id, 'passphrase') or False) and True
+        result['known'] = (wireless.GetWirelessProperty(network_id, 'key') or
+                           wireless.GetWirelessProperty(network_id, 'apsk') or
+                           wireless.GetWirelessProperty(network_id, 'passphrase'))
         results.append(result)
 
     return jsonify(data=results)
@@ -66,10 +67,13 @@ def details(network_id):
     result['channel'] = wireless.GetWirelessProperty(network_id, 'channel')
     result['quality'] = wireless.GetWirelessProperty(network_id, 'quality')
     result['essid'] = wireless.GetWirelessProperty(network_id, 'essid')
-    if result['essid'] == '<hidden>': result['essid'] = ''
+    if result['essid'] == '<hidden>':
+        result['essid'] = ''
 
     # check if there's key/passphrase stored (WPA1/2 and WEP only, sorry)
-    result['known'] = (wireless.GetWirelessProperty(network_id, 'key') or wireless.GetWirelessProperty(network_id, 'apsk') or wireless.GetWirelessProperty(network_id, 'passphrase') or False) and True
+    result['known'] = (wireless.GetWirelessProperty(network_id, 'key') or
+                       wireless.GetWirelessProperty(network_id, 'apsk') or
+                       wireless.GetWirelessProperty(network_id, 'passphrase'))
 
     return jsonify(data=result)
 
@@ -163,8 +167,7 @@ def current():
 
 # functions
 def is_valid_wireless_network_id(network_id):
-    if not (network_id >= 0 \
-            and network_id < wireless.GetNumberOfNetworks()):
+    if not (network_id >= 0 and network_id < wireless.GetNumberOfNetworks()):
         abort(400)
 
 # init
@@ -180,7 +183,7 @@ try:
     daemon = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon'), 'org.wicd.daemon')
     wireless = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon/wireless'),
                               'org.wicd.daemon.wireless')
-    config = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon/config'), 'org.wicd.daemon.config')
+    dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon/config'), 'org.wicd.daemon.config')
 except dbus.DBusException:
     print 'Error: Could not connect to the daemon. Please make sure it is running.'
     sys.exit(3)
