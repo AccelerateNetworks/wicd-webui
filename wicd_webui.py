@@ -9,9 +9,11 @@ from wicd import misc
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 @app.route('/list')
 def list():
@@ -32,12 +34,14 @@ def list():
         result['known'] = (wireless.GetWirelessProperty(network_id, 'key') or wireless.GetWirelessProperty(network_id, 'apsk') or wireless.GetWirelessProperty(network_id, 'passphrase') or False) and True
         results.append(result)
 
-    return jsonify(data = results)
+    return jsonify(data=results)
+
 
 @app.route('/scan')
 def scan():
     wireless.Scan(True)
     return list()
+
 
 @app.route('/connect/<int:network_id>')
 def connect(network_id):
@@ -45,7 +49,8 @@ def connect(network_id):
 
     wireless.ConnectWireless(network_id)
 
-    return jsonify(data = wireless.GetWirelessProperty(network_id, 'essid'))
+    return jsonify(data=wireless.GetWirelessProperty(network_id, 'essid'))
+
 
 @app.route('/details/<int:network_id>')
 def details(network_id):
@@ -61,12 +66,13 @@ def details(network_id):
     result['channel'] = wireless.GetWirelessProperty(network_id, 'channel')
     result['quality'] = wireless.GetWirelessProperty(network_id, 'quality')
     result['essid'] = wireless.GetWirelessProperty(network_id, 'essid')
-    if result['essid'] == '<hidden>' : result['essid'] = ''
+    if result['essid'] == '<hidden>': result['essid'] = ''
 
     # check if there's key/passphrase stored (WPA1/2 and WEP only, sorry)
     result['known'] = (wireless.GetWirelessProperty(network_id, 'key') or wireless.GetWirelessProperty(network_id, 'apsk') or wireless.GetWirelessProperty(network_id, 'passphrase') or False) and True
 
-    return jsonify(data = result)
+    return jsonify(data=result)
+
 
 @app.route('/config', methods=['POST'])
 def config():
@@ -104,7 +110,7 @@ def config():
         enctype = request.json.get('wicd-enctype', None)
         enckey = None
 
-        if enctype in [ 'wpa', 'wep-hex']:
+        if enctype in ['wpa', 'wep-hex']:
             enckey = 'key'
         elif enctype == 'wpa-psk':
             enckey = 'apsk'
@@ -114,23 +120,24 @@ def config():
         if enckey:
             wireless.SetWirelessProperty(network_id, enckey, passkey)
 
-
     result = {}
-    return jsonify(data = result)
+    return jsonify(data=result)
+
 
 @app.route('/status')
 def status():
     check = wireless.CheckIfWirelessConnecting()
     status = wireless.CheckWirelessConnectingStatus()
     message = wireless.CheckWirelessConnectingMessage()
+    return jsonify(data=(check, status, message))
 
-    return jsonify(data = (check, status, message))
 
 @app.route('/disconnect')
 def disconnect():
     daemon.Disconnect()
 
-    return jsonify(data = None)
+    return jsonify(data=None)
+
 
 @app.route('/current')
 def current():
@@ -151,7 +158,8 @@ def current():
         else:
             result['quality'] = wireless.GetCurrentDBMStrength(iwconfig)
 
-    return jsonify(data = result)
+    return jsonify(data=result)
+
 
 # functions
 def is_valid_wireless_network_id(network_id):
@@ -169,12 +177,10 @@ else:
 
 bus = dbus.SystemBus()
 try:
-    daemon = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon'),
-            'org.wicd.daemon')
+    daemon = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon'), 'org.wicd.daemon')
     wireless = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon/wireless'),
-            'org.wicd.daemon.wireless')
-    config = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon/config'),
-            'org.wicd.daemon.config')
+                              'org.wicd.daemon.wireless')
+    config = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon/config'), 'org.wicd.daemon.config')
 except dbus.DBusException:
     print 'Error: Could not connect to the daemon. Please make sure it is running.'
     sys.exit(3)
