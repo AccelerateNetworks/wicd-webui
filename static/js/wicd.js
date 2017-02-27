@@ -54,7 +54,18 @@ function refresh_networks(data) {
     var row = $("<tr />");
     row.append($("<td>" + val.essid + "</td>"));
     row.append($("<td>" + val.encryption + known + "</td>"));
-    row.append($("<td>" + val.quality + "%</td>"));
+    var color = "default";
+    if(val.quality >= 90) {
+      color = "success";
+    } else if(val.quality >= 80) {
+      color = "info";
+    } else if(val.quality >= 70) {
+      color = "warning";
+    } else {
+      color = "danger";
+    }
+    var bar = $("<div>").addClass('progress').append($("<div>").addClass('progress-bar').addClass('progress-bar-' + color).attr('role', 'progressbar').css('width', val.quality + "%").text(val.quality));
+    row.append($("<td>").append(bar));
     row.append($("<td><a href=\"javascript:connect_to_network(" + val.network_id + ");\"><span class=\"glyphicon glyphicon-log-in\"></a>&nbsp;<a href=\"javascript:configure_network(" + val.network_id + ");\"><span class=\"glyphicon glyphicon-cog\"></a></td>"));
     row.appendTo(tbody);
   });
@@ -118,7 +129,7 @@ function current_network() {
       newp.append(document.createTextNode(' at '));
       newp.append($('<i/>').text(data.data.quality + '%'));
       newp.append(document.createTextNode(' (IP: '));
-        newp.append($('<i/>').text(datadata.ip));
+        newp.append($('<i/>').text(data.data.ip));
         newp.append(document.createTextNode(')'));
         newp.append('<a href=\"javascript:disconnect_network();\"><span class=\"glyphicon glyphicon-log-out\"></a>');
       }
