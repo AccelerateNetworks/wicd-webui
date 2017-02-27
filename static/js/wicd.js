@@ -42,14 +42,14 @@ var statusModal = (function () {
 })();
 
 function showAlert(text, color) {
-  var alertBox = $(".wicd-top-alert")
-  alertBox.text(text).removeClass('alert-success alert-info alert-warning alert-danger').addClass("alert-" + color).removeClass('hidden')
+  var alertBox = $(".wicd-top-alert");
+  alertBox.text(text).removeClass('alert-success alert-info alert-warning alert-danger').addClass("alert-" + color).removeClass('hidden');
 }
 
 function hideAlert() {
 
-  var alertBox = $(".wicd-top-alert")
-  alertBox.addClass("hidden")
+  var alertBox = $(".wicd-top-alert");
+  alertBox.addClass("hidden");
 }
 
 function refresh_networks(data) {
