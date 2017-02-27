@@ -62,13 +62,12 @@
 			<div class="panel-body text-center">
 				<table class="table table-bordered" spacing="1">
 					<tr>
-						<td colspan="3">
-							<div id="current_network"><p></p></div>
-						</td>
-						<td class="bg-success">Connected</td>
-						<td class="bg-info">Known network</td>
+						<td id="current-essid"></td>
+						<td><code id="current-ip"></code></td>
+						<td><a href="#" id="disconnect-button" class="btn btn-danger disabled">Disconnect</a></td>
 					</tr>
 				</table>
+				<div id="current_network"><p></p></div>
 			</div>
 			<div class="alert hidden wicd-top-alert" role="alert">Hi, this is an Alert!</div>
 			<!-- Table -->

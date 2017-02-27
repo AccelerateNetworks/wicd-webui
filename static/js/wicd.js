@@ -141,22 +141,16 @@ function disconnect_network() {
 
 function current_network() {
   $.getJSON("current", function(data) {
-    $('#current_network>p').remove();
-    var newp = $('<p/>');
-    if ($.isEmptyObject(data.data))
-      newp.text("Currently not connected to any network");
-    else {
-      newp.text('Connected to ');
-      newp.append($('<i/>').text('"' + data.data.network + '"'));
-      newp.append(document.createTextNode(' at '));
-      newp.append($('<i/>').text(data.data.quality + '%'));
-      newp.append(document.createTextNode(' (IP: '));
-        newp.append($('<i/>').text(data.data.ip));
-        newp.append(document.createTextNode(')'));
-        newp.append(' <a href=\"javascript:disconnect_network();\" class=\"btn btn-danger btn-sm\">Disconnect <span class=\"glyphicon glyphicon-log-out\"></a>');
-      }
-      newp.appendTo("#current_network");
-    });
+    if ($.isEmptyObject(data.data)) {
+      $("#current-essid").text("");
+      $("#current-ip").text("");
+      $("#disconnect-button").addClass("disabled");
+    } else {
+      $("#current-essid").text(data.data.network);
+      $("#current-ip").text(data.data.ip);
+      $("#disconnect-button").removeClass("disabled");
+    }
+  });
 }
 
 function configure_network() {
@@ -193,6 +187,7 @@ function configure_network() {
 }
 
 $( document ).ready(function() {
+  $("#disconnect-button").click(disconnect_network);
   current_network();
   list_networks();
   if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
