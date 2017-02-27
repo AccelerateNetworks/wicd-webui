@@ -54,7 +54,6 @@ function refresh_networks(data) {
     var row = $("<tr />");
     row.append($("<td>" + val.essid + "</td>"));
     row.append($("<td>" + val.encryption + known + "</td>"));
-    row.append($("<td>" + val.quality + "%</td>"));
     row.append($("<td><div class=\"progress\"><div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\"" + val.quality + "\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: " + val.quality + "%;\">" + val.quality + "%</div></div></td>"));
     row.append($("<td><a href=\"javascript:connect_to_network(" + val.network_id + ");\"><span class=\"glyphicon glyphicon-log-in\"></a>&nbsp;<a href=\"javascript:configure_network(" + val.network_id + ");\"><span class=\"glyphicon glyphicon-cog\"></a></td>"));
     row.appendTo(tbody);
