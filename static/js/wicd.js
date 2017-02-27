@@ -129,7 +129,7 @@ function current_network() {
       newp.append(document.createTextNode(' at '));
       newp.append($('<i/>').text(data.data.quality + '%'));
       newp.append(document.createTextNode(' (IP: '));
-        newp.append($('<i/>').text(datadata.ip));
+        newp.append($('<i/>').text(data.data.ip));
         newp.append(document.createTextNode(')'));
         newp.append('<a href=\"javascript:disconnect_network();\"><span class=\"glyphicon glyphicon-log-out\"></a>');
       }
