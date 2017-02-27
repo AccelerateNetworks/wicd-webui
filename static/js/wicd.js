@@ -41,6 +41,17 @@ var statusModal = (function () {
   };
 })();
 
+function showAlert(text, color) {
+  var alertBox = $(".wicd-top-alert")
+  alertBox.text(text).removeClass('alert-success alert-info alert-warning alert-danger').addClass("alert-" + color).removeClass('hidden')
+}
+
+function hideAlert() {
+
+  var alertBox = $(".wicd-top-alert")
+  alertBox.addClass("hidden")
+}
+
 function refresh_networks(data) {
 
   $('#network-table>tbody').remove();
@@ -70,27 +81,24 @@ function refresh_networks(data) {
     row.appendTo(tbody);
   });
   tbody.appendTo("#network-table");
-  statusModal.hide();
+  hideAlert();
 }
 
 function list_networks() {
-  statusModal.show();
-  statusModal.text('Listing networks...');
+  showAlert('Scanning for networks...', 'info');
   $.getJSON( "list", refresh_networks );
 }
 
 function scan_networks() {
-  statusModal.show();
-  statusModal.text('Scanning networks...');
+  showAlert('Scanning networks...', 'info');
   $.getJSON( "scan", refresh_networks );
 }
 
 function connect_to_network(network_id) {
-  statusModal.show();
-  statusModal.text('Connecting...');
+  showAlert('Connecting...', 'info');
   $.getJSON( "connect/" + network_id, function(data) {
-    statusModal.label('Please wait (' + data.data + ')');
-    statusModal.text('Connecting to ' + data.data + '...');
+    showAlert('Please wait (' + data.data + ')', 'info');
+    showAlert('Connecting to ' + data.data, 'info');
     watch_connection_status();
   } );
 }
@@ -98,22 +106,23 @@ function connect_to_network(network_id) {
 function watch_connection_status() {
   $.getJSON( "status", function(data) {
     connecting = data.data[0];
+    status = data.data[1];
     message = data.data[2];
-    statusModal.text(message);
-    if (connecting) setTimeout(watch_connection_status, 1000);
-    else {
-      statusModal.closeable();
+    if (connecting) {
+      showAlert(message, 'info');
+      setTimeout(watch_connection_status, 1000);
+    } else {
+      showAlert(message, status == 'done' ? 'success' : 'danger');
       current_network();
     }
   });
 }
 
 function disconnect_network() {
-  statusModal.show();
-  statusModal.text('Disconnecting...');
+  showAlert('Disconnecting...', 'warning');
   $.getJSON( "disconnect", function(data) {
     $('#current_network>p').text("Currently not connected to any network");
-    statusModal.hide();
+    hideAlert();
   } );
 }
 
