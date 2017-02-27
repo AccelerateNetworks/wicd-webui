@@ -46,14 +46,15 @@ function refresh_networks(data) {
   $('#network-table>tbody').remove();
   var tbody = $('<tbody/>');
   var known;
-  $.each( data.data, function( key, val ) {
-    if (val.known) {
-      known = "<span class=\"glyphicon glyphicon-ok\">";
-    }
-    else known = "";
+  $.each(data.data, function(key, val) {
     var row = $("<tr />");
+    if(val.connected) {
+      row.addClass("success");
+    } else if(val.known) {
+      row.addClass('info');
+    }
     row.append($("<td>" + val.essid + "</td>"));
-    row.append($("<td>" + val.encryption + known + "</td>"));
+    row.append($("<td>" + val.encryption + "</td>"));
     var color = "default";
     if(val.quality >= 90) {
       color = "success";
@@ -118,7 +119,7 @@ function disconnect_network() {
 }
 
 function current_network() {
-  $.getJSON( "current", function(data) {
+  $.getJSON("current", function(data) {
     $('#current_network>p').remove();
     var newp = $('<p/>');
     if ($.isEmptyObject(data.data))
