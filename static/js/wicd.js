@@ -64,7 +64,7 @@ function refresh_networks(data) {
     } else {
       color = "danger";
     }
-    var bar = $("<div>").addClass('progress').append($("<div>").addClass('progress-bar').addClass('progress-bar-' + color).attr('role', 'progressbar').style('width', val.quality + "%"));
+    var bar = $("<div>").addClass('progress').append($("<div>").addClass('progress-bar').addClass('progress-bar-' + color).attr('role', 'progressbar').css('width', val.quality + "%"));
     row.append($("<td>").append(bar));
     row.append($("<td><a href=\"javascript:connect_to_network(" + val.network_id + ");\"><span class=\"glyphicon glyphicon-log-in\"></a>&nbsp;<a href=\"javascript:configure_network(" + val.network_id + ");\"><span class=\"glyphicon glyphicon-cog\"></a></td>"));
     row.appendTo(tbody);
