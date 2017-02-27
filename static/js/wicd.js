@@ -48,7 +48,9 @@ function refresh_networks(data) {
   var known;
   $.each(data.data, function(key, val) {
     var row = $("<tr />");
-    if(val.known) {
+    if(val.connected) {
+      row.addClass("success");
+    } else if(val.known) {
       row.addClass('info');
     }
     row.append($("<td>" + val.essid + "</td>"));
@@ -117,7 +119,7 @@ function disconnect_network() {
 }
 
 function current_network() {
-  $.getJSON( "current", function(data) {
+  $.getJSON("current", function(data) {
     $('#current_network>p').remove();
     var newp = $('<p/>');
     if ($.isEmptyObject(data.data))

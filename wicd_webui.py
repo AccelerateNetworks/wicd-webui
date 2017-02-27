@@ -16,6 +16,15 @@ def home():
 
 @app.route('/list')
 def list():
+    current = None
+
+    if wireless.GetWirelessIP(""):
+        if daemon.NeedsExternalCalls():
+            iwconfig = wireless.GetIwconfig()
+        else:
+            iwconfig = ''
+        current = wireless.GetCurrentNetworkID(iwconfig)
+
     results = []
     for network_id in range(wireless.GetNumberOfNetworks()):
         result = {}
@@ -28,6 +37,7 @@ def list():
         result['channel'] = wireless.GetWirelessProperty(network_id, 'channel')
         result['quality'] = wireless.GetWirelessProperty(network_id, 'quality')
         result['essid'] = wireless.GetWirelessProperty(network_id, 'essid')
+        result['connected'] = result['bssid'] == current
 
         # check if there's key/passphrase stored (WPA1/2 and WEP only, sorry)
         result['known'] = (wireless.GetWirelessProperty(network_id, 'key') or
