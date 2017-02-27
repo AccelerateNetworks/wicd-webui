@@ -68,9 +68,10 @@ function qualityBar(q) {
 }
 
 function actionButtons(id) {
-  var connect = $("<a>").data('id', id).click(connect_to_network).append($("<span>").addClass('glyphicon glyphicon-log-in'));
-  var configure = $("<a>").data('id', id).click(configure_network).append($("<span>").addClass('glyphicon glyphicon-cog'));
-  return $("<td>").append(connect).append(configure);
+  var group = $("<div>").addClass('btn-group');
+  var connect = $("<a>").data('id', id).click(connect_to_network).text("Connect ").addClass('btn btn-success btn-sm').append($("<span>").addClass('glyphicon glyphicon-log-in'));
+  var configure = $("<a>").data('id', id).click(configure_network).text("Configure ").addClass('btn btn-info btn-sm').append($("<span>").addClass('glyphicon glyphicon-cog'));
+  return group.append(connect).append(configure);
 }
 
 function refresh_networks(data) {
@@ -88,7 +89,7 @@ function refresh_networks(data) {
     row.append($("<td>" + val.essid + "</td>"));
     row.append($("<td>" + val.encryption + "</td>"));
     row.append($("<td>").append(qualityBar(val.quality)));
-    row.append(actionButtons(val.network_id));
+    row.append($("<td>").append(actionButtons(val.network_id)));
     row.appendTo(tbody);
   });
   tbody.appendTo("#network-table");
@@ -105,7 +106,8 @@ function scan_networks() {
   $.getJSON( "scan", refresh_networks );
 }
 
-function connect_to_network(network_id) {
+function connect_to_network() {
+  var network_id = $(this).data('id');
   showAlert('Connecting...', 'info');
   $.getJSON( "connect/" + network_id, function(data) {
     showAlert('Please wait (' + data.data + ')', 'info');
@@ -157,7 +159,8 @@ function current_network() {
     });
 }
 
-function configure_network(network_id) {
+function configure_network() {
+  var network_id = $(this).data('id');
   statusModal.show();
   statusModal.text('Listing networks...');
   $.getJSON( "details/" + network_id, function(data) {
