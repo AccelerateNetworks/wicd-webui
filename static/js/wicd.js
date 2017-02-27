@@ -52,6 +52,27 @@ function hideAlert() {
   alertBox.addClass("hidden");
 }
 
+function qualityBar(q) {
+  var color = "default";
+  if(q >= 90) {
+    color = "success";
+  } else if(q >= 80) {
+    color = "info";
+  } else if(q >= 70) {
+    color = "warning";
+  } else {
+    color = "danger";
+  }
+  var bar = $("<div>").addClass('progress-bar').addClass('progress-bar-' + color).attr('role', 'progressbar').css('width', q + "%").text(q + "%");
+  return $("<div>").addClass('progress').append(bar);
+}
+
+function actionButtons(id) {
+  var connect = $("<a>").data('id', id).click(connect_to_network).append($("<span>").addClass('glyphicon glyphicon-log-in'));
+  var configure = $("<a>").data('id', id).click(configure_network).append($("<span>").addClass('glyphicon glyphicon-cog'));
+  return $("<td>").append(connect).append(configure);
+}
+
 function refresh_networks(data) {
 
   $('#network-table>tbody').remove();
@@ -66,19 +87,8 @@ function refresh_networks(data) {
     }
     row.append($("<td>" + val.essid + "</td>"));
     row.append($("<td>" + val.encryption + "</td>"));
-    var color = "default";
-    if(val.quality >= 90) {
-      color = "success";
-    } else if(val.quality >= 80) {
-      color = "info";
-    } else if(val.quality >= 70) {
-      color = "warning";
-    } else {
-      color = "danger";
-    }
-    var bar = $("<div>").addClass('progress').append($("<div>").addClass('progress-bar').addClass('progress-bar-' + color).attr('role', 'progressbar').css('width', val.quality + "%").text(val.quality));
-    row.append($("<td>").append(bar));
-    row.append($("<td><a href=\"javascript:connect_to_network(" + val.network_id + ");\"><span class=\"glyphicon glyphicon-log-in\"></a>&nbsp;<a href=\"javascript:configure_network(" + val.network_id + ");\"><span class=\"glyphicon glyphicon-cog\"></a></td>"));
+    row.append($("<td>").append(qualityBar(val.quality)));
+    row.append(actionButtons(val.network_id));
     row.appendTo(tbody);
   });
   tbody.appendTo("#network-table");
@@ -87,7 +97,7 @@ function refresh_networks(data) {
 
 function list_networks() {
   showAlert('Scanning for networks...', 'info');
-  $.getJSON( "list", refresh_networks );
+  $.getJSON("list", refresh_networks);
 }
 
 function scan_networks() {
