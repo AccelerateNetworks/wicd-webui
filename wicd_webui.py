@@ -170,7 +170,6 @@ def is_valid_wireless_network_id(network_id):
     if not (network_id >= 0 and network_id < wireless.GetNumberOfNetworks()):
         abort(400)
 
-# init
 
 if getattr(dbus, 'version', (0, 0, 0)) < (0, 80, 0):
     import dbus.glib
