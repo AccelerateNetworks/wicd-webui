@@ -113,7 +113,7 @@ function network_status_precheck(){
 function connect_to_network(network_id) {
   return function(current) {
     console.log("Preparing to connect to network...", network_id, current);
-    if(typeof current.network === undefined) {
+    if(current.data.network === undefined) {
       showAlert('Connecting...', 'info');
       $.getJSON("connect/" + network_id, function(data) {
         showAlert('Please wait (' + data.data + ')', 'info');
@@ -122,8 +122,7 @@ function connect_to_network(network_id) {
       });
     } else {
         statusModal.show();
-        statusModal.text('Are you sure you want to disconnect from ' + current.network);
-
+        statusModal.text('Are you sure you want to disconnect from ' + current.data.network);
     }
   }
 }
