@@ -211,4 +211,5 @@ $( document ).ready(function() {
         dataType: 'json'
       });
   });
+  setInterval(current_network, 5000);
 });
