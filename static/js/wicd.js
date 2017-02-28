@@ -205,6 +205,7 @@ function configure_network() {
 
 $( document ).ready(function() {
   $("#disconnect-button").click(disconnect_network);
+  $("#scan-button").click(scan_networks);
   current_network();
   list_networks();
   if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
