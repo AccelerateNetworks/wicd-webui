@@ -116,7 +116,6 @@ function connect_to_network(network_id) {
     if(current.data.network === undefined) {
       showAlert('Connecting...', 'info');
       $.getJSON("connect/" + network_id, function(data) {
-        showAlert('Please wait (' + data.data + ')', 'info');
         showAlert('Connecting to ' + data.data, 'info');
         watch_connection_status();
       });
@@ -128,7 +127,6 @@ function connect_to_network(network_id) {
         event.preventDefault();
         showAlert('Connecting...', 'info');
         $.getJSON("connect/" + network_id, function(data) {
-          showAlert('Please wait (' + data.data + ')', 'info');
           showAlert('Connecting to ' + data.data, 'info');
           watch_connection_status();
           $("#confirmDisconnectModal").modal("hide");
