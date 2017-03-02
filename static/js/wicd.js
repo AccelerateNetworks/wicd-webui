@@ -122,21 +122,21 @@ function connect_to_network(network_id) {
       });
     } else {
       $("#confirmDisconnectText").text('Are you sure you want to disconnect from ' + current.data.network);
-      $("#confirmDisconnectModal").modal("show")
+      $("#confirmDisconnectModal").modal("show");
       $('#confirmDisconnectModal').submit(function(event) {
-        $(".disconnectNetworkButton").addClass("disabled")
+        $(".disconnectNetworkButton").addClass("disabled");
         event.preventDefault();
         showAlert('Connecting...', 'info');
         $.getJSON("connect/" + network_id, function(data) {
-          showAlert('Please wait1 (' + data.data + ')', 'info');
+          showAlert('Please wait (' + data.data + ')', 'info');
           showAlert('Connecting to ' + data.data, 'info');
           watch_connection_status();
-          $("#confirmDisconnectModal").modal("hide")
-          $(".disconnectNetworkButton").removeClass("disabled")
+          $("#confirmDisconnectModal").modal("hide");
+          $(".disconnectNetworkButton").removeClass("disabled");
           });
       });
     }
-  }
+  };
 }
 
 function watch_connection_status() {
