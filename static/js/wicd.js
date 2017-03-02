@@ -52,7 +52,7 @@ function hideAlert() {
   alertBox.addClass("hidden");
 }
 
-function qualityBar(q) {
+function mkbar(element, q) {
   var color = "default";
   if(q >= 90) {
     color = "success";
@@ -63,7 +63,13 @@ function qualityBar(q) {
   } else {
     color = "danger";
   }
-  var bar = $("<div>").addClass('progress-bar').addClass('progress-bar-' + color).attr('role', 'progressbar').css('width', q + "%").text(q + "%");
+  element.removeClass("progress-bar-success progress-bar-info progress-bar-warning progress-bar-danger progress-bar-disabled");
+  element.addClass("progress-bar-" + color).css('width', q + "%").text(q + "%");
+  return element;
+}
+
+function qualityBar(q) {
+  var bar = mkbar($("<div>").addClass('progress-bar'), q);
   return $("<div>").addClass('progress').append(bar);
 }
 
@@ -81,14 +87,21 @@ function refresh_networks(data) {
   var known;
   $.each(data.data, function(key, val) {
     var row = $("<tr />");
+    var info = [];
     if(val.connected) {
       row.addClass("success");
-    } else if(val.known) {
-      row.addClass('info');
+      info.push("Connected");
+    }
+    if(val.known) {
+      if(!val.connected) {
+        row.addClass('info');
+      }
+      info.push("Known");
     }
     row.append($("<td>" + val.essid + "</td>"));
     row.append($("<td>" + val.encryption + "</td>"));
     row.append($("<td>").append(qualityBar(val.quality)));
+    row.append($("<td>").text(info.join(", ")));
     row.append($("<td>").append(actionButtons(val.network_id)));
     row.appendTo(tbody);
   });
@@ -134,29 +147,27 @@ function watch_connection_status() {
 function disconnect_network() {
   showAlert('Disconnecting...', 'warning');
   $.getJSON( "disconnect", function(data) {
-    $('#current_network>p').text("Currently not connected to any network");
+    $("#current-essid").text("");
+    $("#current-ip").text("");
+    $("#disconnect-button").addClass("disabled");
     hideAlert();
   } );
 }
 
 function current_network() {
   $.getJSON("current", function(data) {
-    $('#current_network>p').remove();
-    var newp = $('<p/>');
-    if ($.isEmptyObject(data.data))
-      newp.text("Currently not connected to any network");
-    else {
-      newp.text('Connected to ');
-      newp.append($('<i/>').text('"' + data.data.network + '"'));
-      newp.append(document.createTextNode(' at '));
-      newp.append($('<i/>').text(data.data.quality + '%'));
-      newp.append(document.createTextNode(' (IP: '));
-        newp.append($('<i/>').text(data.data.ip));
-        newp.append(document.createTextNode(')'));
-        newp.append(' <a href=\"javascript:disconnect_network();\" class=\"btn btn-danger btn-sm\">Disconnect <span class=\"glyphicon glyphicon-log-out\"></a>');
-      }
-      newp.appendTo("#current_network");
-    });
+    if ($.isEmptyObject(data.data)) {
+      $("#current-essid").text("");
+      $("#current-ip").text("");
+      $("#disconnect-button").addClass("disabled");
+      $("#current-quality").addClass("progress-bar-disabled").removeClass("progress-bar-success progress-bar-info progress-bar-warning progress-bar-danger");
+    } else {
+      $("#current-essid").text(data.data.network);
+      $("#current-ip").text(data.data.ip);
+      mkbar($("#current-quality"), data.data.quality);
+      $("#disconnect-button").removeClass("disabled");
+    }
+  });
 }
 
 function configure_network() {
@@ -193,6 +204,8 @@ function configure_network() {
 }
 
 $( document ).ready(function() {
+  $("#disconnect-button").click(disconnect_network);
+  $("#scan-button").click(scan_networks);
   current_network();
   list_networks();
   if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
