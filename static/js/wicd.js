@@ -124,6 +124,7 @@ function connect_to_network(network_id) {
       $("#confirmDisconnectModal").modal("show");
       $('#confirmDisconnectModal').submit(function(event) {
         $(".disconnectNetworkButton").addClass("disabled");
+        $(".disconnectNetworkButton").text('Connecting...');
         event.preventDefault();
         showAlert('Connecting...', 'info');
         $.getJSON("connect/" + network_id, function(data) {
