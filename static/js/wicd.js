@@ -75,7 +75,7 @@ function qualityBar(q) {
 
 function actionButtons(id) {
   var group = $("<div>").addClass('btn-group');
-  var connect = $("<a>").data('id', id).click(connect_to_network).text("Connect ").addClass('btn btn-success btn-sm').append($("<span>").addClass('glyphicon glyphicon-log-in'));
+  var connect = $("<a>").data('id', id).click(network_status_precheck).text("Connect ").addClass('btn btn-success btn-sm').append($("<span>").addClass('glyphicon glyphicon-log-in'));
   var configure = $("<a>").data('id', id).click(configure_network).text("Configure ").addClass('btn btn-info btn-sm').append($("<span>").addClass('glyphicon glyphicon-cog'));
   return group.append(connect).append(configure);
 }
@@ -119,14 +119,36 @@ function scan_networks() {
   $.getJSON( "scan", refresh_networks );
 }
 
-function connect_to_network() {
-  var network_id = $(this).data('id');
-  showAlert('Connecting...', 'info');
-  $.getJSON( "connect/" + network_id, function(data) {
-    showAlert('Please wait (' + data.data + ')', 'info');
-    showAlert('Connecting to ' + data.data, 'info');
-    watch_connection_status();
-  } );
+function network_status_precheck(){
+  $.getJSON("current", connect_to_network($(this).data('id')));
+}
+
+function connect_to_network(network_id) {
+  return function(current) {
+    console.log("Preparing to connect to network...", network_id, current);
+    if(current.data.network === undefined) {
+      showAlert('Connecting...', 'info');
+      $.getJSON("connect/" + network_id, function(data) {
+        showAlert('Connecting to ' + data.data, 'info');
+        watch_connection_status();
+      });
+    } else {
+      $("#confirmDisconnectText").text('Are you sure you want to disconnect from ' + current.data.network);
+      $("#confirmDisconnectModal").modal("show");
+      $('#confirmDisconnectModal').submit(function(event) {
+        event.preventDefault();
+        $(".disconnectNetworkButton").addClass("disabled");
+        $(".disconnectNetworkButton").text('Connecting...');
+        showAlert('Connecting...', 'info');
+        $.getJSON("connect/" + network_id, function(data) {
+          showAlert('Connecting to ' + data.data, 'info');
+          watch_connection_status();
+          $("#confirmDisconnectModal").modal("hide");
+          $(".disconnectNetworkButton").removeClass("disabled");
+          });
+      });
+    }
+  };
 }
 
 function watch_connection_status() {
@@ -139,6 +161,9 @@ function watch_connection_status() {
       setTimeout(watch_connection_status, 1000);
     } else {
       showAlert(message, status == 'done' ? 'success' : 'danger');
+      if (status == 'done') {
+        setTimeout(hideAlert, 5000);
+      }
       current_network();
     }
   });
